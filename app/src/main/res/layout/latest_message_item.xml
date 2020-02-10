@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_username_latest_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        tools:text = "UserName"
+        android:textColor="#0E0101"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_latest_message_latest_messages"
+        app:layout_constraintStart_toEndOf="@+id/iv_profile_users_photo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_profile_users_photo"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:civ_border_width="4dp"
+        app:civ_border_color="@color/common_google_signin_btn_text_dark"
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_latest_message_latest_messages"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/iv_profile_users_photo"
+        app:layout_constraintTop_toBottomOf="@+id/tv_username_latest_messages" />
+</androidx.constraintlayout.widget.ConstraintLayout>
