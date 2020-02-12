@@ -11,24 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        tools:text = "UserName"
+        android:layout_marginTop="12dp"
         android:textColor="#0E0101"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tv_latest_message_latest_messages"
         app:layout_constraintStart_toEndOf="@+id/iv_profile_users_photo"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_profile_users_photo"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        app:civ_border_width="4dp"
-        app:civ_border_color="@color/common_google_signin_btn_text_dark"
-        android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="UserName" />
 
     <TextView
         android:id="@+id/tv_latest_message_latest_messages"
@@ -36,10 +26,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="48dp"
         android:text="Message"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/iv_profile_users_photo"
-        app:layout_constraintTop_toBottomOf="@+id/tv_username_latest_messages" />
+        app:layout_constraintStart_toEndOf="@+id/iv_profile_users_photo" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_profile_users_photo"
+        android:layout_width="82dp"
+        android:layout_height="82dp"
+        app:civ_border_width="4dp"
+        app:civ_border_color="@color/common_google_signin_btn_text_dark"
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

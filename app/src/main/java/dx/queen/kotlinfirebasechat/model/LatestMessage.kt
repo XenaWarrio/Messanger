@@ -22,6 +22,7 @@ class LatestMessage (val chatMessage : Message ): Item<GroupieViewHolder>() {
         viewHolder.itemView.tv_latest_message_latest_messages.text = chatMessage.text
 
         val chatPartnerId : String
+
         if(chatMessage.fromId == FirebaseAuth.getInstance().uid){
             chatPartnerId = chatMessage.toId
         }else{

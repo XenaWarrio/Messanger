@@ -7,21 +7,19 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import dx.queen.kotlinfirebasechat.R
 import dx.queen.kotlinfirebasechat.model.LatestMessage
 import dx.queen.kotlinfirebasechat.model.Message
-import dx.queen.kotlinfirebasechat.model.User
 import dx.queen.kotlinfirebasechat.registerlogin.RegisterActivity
 import kotlinx.android.synthetic.main.activity_latest_messages.*
 
 class LatestMessagesActivity : AppCompatActivity() {
-
-    companion object {
-        var currentUser: User? = null
-    }
 
     val adapter = GroupAdapter<GroupieViewHolder>()
     val latestMessagesMap = HashMap<String, Message>()
@@ -30,7 +28,8 @@ class LatestMessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
 
-        val adapter = GroupAdapter<GroupieViewHolder>()
+        supportActionBar?.title = "Chats"
+
         rv_latest_massages.adapter = adapter
         rv_latest_massages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         listenForLatestMessage()
@@ -42,15 +41,12 @@ class LatestMessagesActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val uid = FirebaseAuth.getInstance().uid
-
-
-        if (uid == null) {
-            moveToRegisterActivity()
-        } else {
-            fetchCurrentUser(uid)
-
-        }
+//        val uid = FirebaseAuth.getInstance().uid
+//
+//
+//        if (uid == null) {
+//            moveToRegisterActivity()
+//        }
     }
 
     private fun listenForLatestMessage() {
@@ -87,20 +83,7 @@ class LatestMessagesActivity : AppCompatActivity() {
             adapter.add(LatestMessage(it))
         }
     }
-    private fun fetchCurrentUser(uid: String) {
-        val ref = FirebaseDatabase.getInstance().getReference("/user/$uid")
 
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                currentUser = p0.getValue(User::class.java)
-            }
-
-        })
-    }
 
     private fun moveToRegisterActivity() {
         val intent = Intent(this, RegisterActivity::class.java)
@@ -118,6 +101,7 @@ class LatestMessagesActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         when (item?.itemId) {
+
             R.id.menu_new_message -> {
                 val intent = Intent(this, NewMessageActivity::class.java)
                 startActivity(intent)
