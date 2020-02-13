@@ -1,6 +1,7 @@
 package dx.queen.kotlinfirebasechat.message
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -120,17 +121,33 @@ class ChatLogActivity : AppCompatActivity() {
             FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
 
         val text = et_message.text.toString()
+
         val message = Message(ref.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
+
+
 
         ref.setValue(message)
             .addOnSuccessListener {
+
                 et_message.text.clear()
                 rv_chat.scrollToPosition(adapter.itemCount - 1)
+
+
             }
         toRef.setValue(message)
+            .addOnSuccessListener {
+
+            }
 
         latestMessageRow.setValue(message)
+            .addOnSuccessListener {
+
+        }
+
         latestMessageToRow.setValue(message)
+            .addOnSuccessListener {
+
+            }
 
     }
 }
@@ -141,6 +158,7 @@ class ChatToItem(val text: String, val user: User) : Item<GroupieViewHolder>() {
     }
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+        Log.d("CHAT_DEBUG" , " CHAT TO ITEM view holder , text = $text")
         viewHolder.itemView.tv_single_message.text = text
         Picasso.get().load(user.imageUrl).into(viewHolder.itemView.iv_companion_photo)
 
@@ -154,6 +172,8 @@ class ChatFromItem(val text: String, val user: User) : Item<GroupieViewHolder>()
     }
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+        Log.d("CHAT_DEBUG" , " CHAT FROM ITEM view holder , text = $text")
+
         viewHolder.itemView.tv_single_message_user.text = text
         Picasso.get().load(user.imageUrl).into(viewHolder.itemView.iv_user_photo)
     }
