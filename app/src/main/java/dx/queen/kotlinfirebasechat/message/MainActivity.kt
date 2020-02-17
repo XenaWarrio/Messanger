@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import dx.queen.kotlinfirebasechat.R
 import dx.queen.kotlinfirebasechat.model.User
 import dx.queen.kotlinfirebasechat.registerlogin.LoginFragment
-import dx.queen.kotlinfirebasechat.registerlogin.RegisterFragment
+import dx.queen.kotlinfirebasechat.mvvm_test.RegisterFragment
 
 class MainActivity : AppCompatActivity(), FragmentsSwitch {
 
@@ -53,7 +53,9 @@ class MainActivity : AppCompatActivity(), FragmentsSwitch {
                 }
             4 -> {
                 SharedPreferencesIsUserRegister.write(true)
-                transaction.replace(R.id.container, RegisterFragment())
+                transaction.replace(R.id.container,
+                    RegisterFragment()
+                )
             }
 
             5 ->
