@@ -1,4 +1,4 @@
-package dx.queen.kotlinfirebasechat.model
+package dx.queen.kotlinfirebasechat.groupieViewHolder
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -9,9 +9,11 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import dx.queen.kotlinfirebasechat.R
+import dx.queen.kotlinfirebasechat.model.Message
+import dx.queen.kotlinfirebasechat.model.User
 import kotlinx.android.synthetic.main.latest_message_item.view.*
 
-class LatestMessage (val chatMessage : Message ): Item<GroupieViewHolder>() {
+class LatestMessage (val chatMessage : Message): Item<GroupieViewHolder>() {
     var chatPartnerUser : User? = null
 
     override fun getLayout(): Int {

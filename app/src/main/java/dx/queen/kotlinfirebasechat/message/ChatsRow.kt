@@ -1,9 +1,7 @@
 package dx.queen.kotlinfirebasechat.message
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.auth.FirebaseAuth
@@ -14,40 +12,46 @@ import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import dx.queen.kotlinfirebasechat.R
-import dx.queen.kotlinfirebasechat.model.LatestMessage
+import dx.queen.kotlinfirebasechat.groupieViewHolder.LatestMessage
 import dx.queen.kotlinfirebasechat.model.Message
-import dx.queen.kotlinfirebasechat.registerlogin.RegisterActivity
-import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.android.synthetic.main.chats_row_fragment.*
 
-class LatestMessagesActivity : AppCompatActivity() {
+class ChatsRow : BaseFragmentSwitch() {
 
-    val adapter = GroupAdapter<GroupieViewHolder>()
+   private val adapter = GroupAdapter<GroupieViewHolder>()
     val latestMessagesMap = HashMap<String, Message>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_latest_messages)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.chats_row_fragment, container, false)
+        (activity as AppCompatActivity).supportActionBar?.title = "Chats"
 
-        supportActionBar?.title = "Chats"
+        return  view
+    }
 
-        rv_latest_massages.adapter = adapter
-        rv_latest_massages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        rv_latest_chats.adapter = adapter
+        rv_latest_chats.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
+        setHasOptionsMenu(true)
+
         listenForLatestMessage()
 
-        adapter.setOnItemClickListener { item, view ->
-            val intent = Intent(this, ChatLogActivity::class.java)
-            val row  = item as LatestMessage
-            intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
-            startActivity(intent)
-        }
 
-//        val uid = FirebaseAuth.getInstance().uid
-//
-//
-//        if (uid == null) {
-//            moveToRegisterActivity()
-//        }
+        adapter.setOnItemClickListener { item, _ ->
+            val row  = item as LatestMessage
+            MainActivity.user = row.chatPartnerUser
+            switchToFragment(3)
+
+        }
     }
+
+
 
     private fun listenForLatestMessage() {
 
@@ -85,17 +89,15 @@ class LatestMessagesActivity : AppCompatActivity() {
     }
 
 
-    private fun moveToRegisterActivity() {
-        val intent = Intent(this, RegisterActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+    private fun switchToFragment(number : Int) {
+        callback!!.switchTo(number)
+       // activity!!.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
-        menuInflater.inflate(R.menu.nav_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate((R.menu.nav_menu), menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -103,14 +105,13 @@ class LatestMessagesActivity : AppCompatActivity() {
         when (item?.itemId) {
 
             R.id.menu_new_message -> {
-                val intent = Intent(this, NewMessageActivity::class.java)
-                startActivity(intent)
+              switchToFragment(2)
 
             }
 
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
-                moveToRegisterActivity()
+                switchToFragment(4)
             }
         }
         return super.onOptionsItemSelected(item)

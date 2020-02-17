@@ -5,23 +5,32 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast.makeText
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import dx.queen.kotlinfirebasechat.R
-import dx.queen.kotlinfirebasechat.message.LatestMessagesActivity
+import dx.queen.kotlinfirebasechat.message.BaseFragmentSwitch
 import dx.queen.kotlinfirebasechat.model.User
-import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.register_fragment.*
 import java.util.*
 
-
-class RegisterActivity : AppCompatActivity() {
+class RegisterFragment : BaseFragmentSwitch() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.register_fragment , container , false)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
         bt_registartion.setOnClickListener {
 
             performRegister()
@@ -29,8 +38,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         tv_have_an_account.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            callback!!.switchTo(5)
         }
 
         bt_select_image.setOnClickListener {
@@ -46,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             selectedPhotoUri = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
+            val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, selectedPhotoUri)
 
             selected_image_view.setImageBitmap(bitmap)
             bt_select_image.alpha = 0f
@@ -54,12 +62,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun performRegister() {
-        //val username = et_username_registration.text.toString()
         val email = et_email_registration.text.toString()
         val password = et_password_registration.text.toString()
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter text ", Toast.LENGTH_LONG)
+            makeText(context, "Please enter text ", Toast.LENGTH_LONG)
                 .show()
             return
         }
@@ -68,8 +75,8 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener {
                 if (!it.isSuccessful) return@addOnCompleteListener
 
-                Toast.makeText(
-                    this,
+                makeText(
+                    context,
                     " User was successfully created! User uid : ${it.result!!.user!!.uid} ",
                     Toast.LENGTH_LONG
                 )
@@ -79,7 +86,7 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             .addOnFailureListener {
-                Toast.makeText(this, "Failed to create user : ${it.message} ", Toast.LENGTH_LONG)
+                makeText(context, "Failed to create user : ${it.message} ", Toast.LENGTH_LONG)
                     .show()
 
             }
@@ -114,9 +121,8 @@ class RegisterActivity : AppCompatActivity() {
         refDataBase.setValue(user)
             .addOnSuccessListener {
 
-                val intent = Intent(this, LatestMessagesActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                callback!!.switchTo(1)
+                activity!!.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE )
             }
     }
 

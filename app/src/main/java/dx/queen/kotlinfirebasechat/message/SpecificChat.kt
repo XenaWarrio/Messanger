@@ -1,38 +1,59 @@
 package dx.queen.kotlinfirebasechat.message
 
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
 import dx.queen.kotlinfirebasechat.R
+import dx.queen.kotlinfirebasechat.groupieViewHolder.MessagesBetweenUsers
 import dx.queen.kotlinfirebasechat.model.Message
 import dx.queen.kotlinfirebasechat.model.User
-import kotlinx.android.synthetic.main.activity_chat_log.*
-import kotlinx.android.synthetic.main.message_pattern_user.view.*
-import kotlinx.android.synthetic.main.pattern_message_companion.view.*
+import kotlinx.android.synthetic.main.specific_chat_fragment.*
 
-class ChatLogActivity : AppCompatActivity() {
+class SpecificChat : BaseFragmentSwitch() {
 
+    private lateinit var user: User
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.specific_chat_fragment, container, false)
+    }
+
+
+    companion object {
+        const val USER_KEY = "user key"
+
+        fun newInstance(user: User): SpecificChat {
+            val fragment = SpecificChat()
+            val args = Bundle()
+            args.putParcelable(USER_KEY, user)
+            fragment.arguments = args
+            return fragment
+        }
+    }
     val adapter = GroupAdapter<GroupieViewHolder>()
     var currentuser: User? = null
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (arguments != null ) {
+            user = arguments!!.getParcelable(USER_KEY)
+        }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_log)
-
-
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
 
         rv_chat.adapter = adapter
 
 
-        supportActionBar?.title = user.username
+        (activity as AppCompatActivity).supportActionBar?.title = user.username
 
 
         fetchCurrentUser()
@@ -50,6 +71,7 @@ class ChatLogActivity : AppCompatActivity() {
             sendMessage(fromId, toId)
         }
     }
+
 
     private fun listenForMessages(user: User, fromId: String, toId: String) {
 
@@ -74,11 +96,16 @@ class ChatLogActivity : AppCompatActivity() {
 
                     if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
                         if (currentuser != null) {
-                            adapter.add(ChatFromItem(chatMessage.text, currentuser!!))
+                            adapter.add(
+                                MessagesBetweenUsers.ChatFromItem(
+                                    chatMessage.text,
+                                    currentuser!!
+                                )
+                            )
                         }
 
                     } else {
-                        adapter.add(ChatToItem(chatMessage.text, user))
+                        adapter.add(MessagesBetweenUsers.ChatToItem(chatMessage.text, user))
                     }
                 }
             }
@@ -91,7 +118,7 @@ class ChatLogActivity : AppCompatActivity() {
         rv_chat.scrollToPosition(adapter.itemCount - 1)
     }
 
-    fun fetchCurrentUser() {
+    private fun fetchCurrentUser() {
         val uid = FirebaseAuth.getInstance().uid
 
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
@@ -142,40 +169,13 @@ class ChatLogActivity : AppCompatActivity() {
         latestMessageRow.setValue(message)
             .addOnSuccessListener {
 
-        }
+            }
 
         latestMessageToRow.setValue(message)
             .addOnSuccessListener {
 
             }
 
-    }
-}
-
-class ChatToItem(val text: String, val user: User) : Item<GroupieViewHolder>() {
-    override fun getLayout(): Int {
-        return R.layout.pattern_message_companion
-    }
-
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        Log.d("CHAT_DEBUG" , " CHAT TO ITEM view holder , text = $text")
-        viewHolder.itemView.tv_single_message.text = text
-        Picasso.get().load(user.imageUrl).into(viewHolder.itemView.iv_companion_photo)
-
-    }
-
-}
-
-class ChatFromItem(val text: String, val user: User) : Item<GroupieViewHolder>() {
-    override fun getLayout(): Int {
-        return R.layout.message_pattern_user
-    }
-
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        Log.d("CHAT_DEBUG" , " CHAT FROM ITEM view holder , text = $text")
-
-        viewHolder.itemView.tv_single_message_user.text = text
-        Picasso.get().load(user.imageUrl).into(viewHolder.itemView.iv_user_photo)
     }
 
 }
